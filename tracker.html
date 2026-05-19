@@ -33,6 +33,56 @@
             background-color:#fee2e2;
             color:#991b1b;
         }
+
+        #add-form{
+            background-color: white;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        #add-form input,
+        #add-form select{
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        #add-form button{
+            padding: 8px 16px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #add-form button:hover{
+            background-color: #2563eb;
+        }
+
+        #status-counter{
+            background-color: white;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+        }
+
+        #status-counter strong{
+            color: #1f2937;
+            font-size: 16px;
+        }
+
     </style>
 
     <meta charset="UTF-8">
@@ -47,6 +97,13 @@
 
     <section id = "applications">
         <h2> Applications</h2>
+
+        <div id = "status-counter">
+            <span>Applied: <strong id = "count-applied">0</strong></span>
+            <span>Interviewing: <strong id = "count-interviewing">0</strong></span>
+            <span>Rejected: <strong id = "count-rejected">0</strong></span>
+
+        </div>
 
                 <div id="add-form">
         <input id="company-input" type="text" placeholder="Company name" />
@@ -84,8 +141,20 @@
     <script>
         document.getElementById("submit-btn").addEventListener("click",addCard);
 
+        let counts = {
+            applied: 0,
+            interviewing: 0,
+            rejected: 0
+        }
+        
+        function updateCounter(){
+            document.getElementById("count-applied").textContent = counts.applied;
+            document.getElementById("count-interviewing").textContent = counts.interviewing;
+            document.getElementById("count-rejected").textContent = counts.rejected;
+        }
+
         function addCard(){
-    
+            
             let company = document.getElementById("company-input").value;
             let role = document.getElementById("role-input").value;
             let status = document.getElementById("status-input").value;
@@ -104,6 +173,12 @@
             <p>Status: <span class = "badge badge-${status}">${displayStatus}</span></p>
             `
             document.getElementById("applications").appendChild(card);
+
+            document.getElementById("company-input").value = "";
+            document.getElementById("role-input").value = "";
+            document.getElementById("status-input").value = "applied";
+            counts[status]++;
+            updateCounter();
         }
     </script>
 </body>
