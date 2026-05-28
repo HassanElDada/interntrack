@@ -140,6 +140,44 @@
     </section>
     <script>
         document.getElementById("submit-btn").addEventListener("click",addCard);
+        
+        let applications = [];
+
+        function render(){
+            //wipe out existing cards from DOm
+            let existingCards = document.querySelectorAll(".card");
+            existingCards.forEach(function(card){
+                card.remove();
+            });
+
+            //reset counts 
+            counts.applied = 0;
+            counts.interviewing = 0;
+            counts.rejected = 0;
+
+            //loop the array, build a card for each item 
+            applications.forEach(function(app,index){
+                let displayStatus = app.status.charAt(0).toUpperCase() + app.status.slice(1);
+
+                let card = document.createElement("div");
+                card.className = "card";
+                card.dataset.status = app.status;
+                card.dataset.index = index; //remember which array slot
+                card.innerHTML = `
+                <button class = "delete-btn">&times;</button>
+                <h3>${app.company}</h3>
+                <p>${app.role}</p>
+                <p>Status: <span class = "badge badge-${app.status}">${displayStatus}</span></p>
+                `;
+                document.getElementById("applications").appendChild(card);
+
+                counts[app.status]++;
+
+            });
+
+            //push fresh counts to counter UI
+            updateCounter();
+        }
 
         let counts = {
             applied: 0,
@@ -157,42 +195,39 @@
         document.getElementById("applications").addEventListener("click", function(event){
             if(event.target.classList.contains("delete-btn")){
                 let card = event.target.closest(".card");
-                let status = card.dataset.status;
-                counts[status]--;
-                updateCounter();
-                card.remove();
+                let index = Number(card.dataset.index);
+                applications.splice(index,1);
+                render();
             }
         });
+
 
         function addCard(){
             
             let company = document.getElementById("company-input").value;
             let role = document.getElementById("role-input").value;
             let status = document.getElementById("status-input").value;
-            let displayStatus = status.charAt(0).toUpperCase() + status.slice(1);
+
 
             if(company === "" || role === ""){
                 alert("Please fill in all fields");
                 return;
             }
 
-            let card = document.createElement("div");
-            card.className = "card";
-            card.dataset.status = status;
-            card.innerHTML = `
-            <button class = "delete-btn">&times;</button>
-            <h3>${company}</h3>
-            <p>${role}</p>
-            <p>Status: <span class = "badge badge-${status}">${displayStatus}</span></p>
-            `
-            document.getElementById("applications").appendChild(card);
+            applications.push({
+                company: company, 
+                role: role, 
+                status: status
+            });
+
+            render();
 
             document.getElementById("company-input").value = "";
             document.getElementById("role-input").value = "";
             document.getElementById("status-input").value = "applied";
-            counts[status]++;
-            updateCounter();
         }
+
+        render();
     </script>
 </body>
 </html>
